@@ -1,0 +1,306 @@
+<html
+  data-composition-variables='[
+    {"id":"tagline","type":"string","label":"Punch line","default":"Your second brain, wired.","maxLength":40},
+    {"id":"accent","type":"color","label":"Accent","default":"#4daafc"},
+    {"id":"url","type":"string","label":"Website","default":"getbraian.github.io","maxLength":40},
+    {"id":"command","type":"string","label":"Command","default":"npx braian","maxLength":30},
+    {"id":"handle","type":"string","label":"X handle","default":"@thepeg","maxLength":24}
+  ]'
+>
+  <template>
+    <style>
+      #root {
+        position: absolute;
+        inset: 0;
+        overflow: hidden;
+        font-family: "Inter", sans-serif;
+        --accent: #4daafc;
+        --ink: #ffffff;
+        --muted: #aab3c8;
+      }
+      /* The icon's own ground: the Icon Composer gradient of the desktop app icon. */
+      #card-ground {
+        position: absolute;
+        inset: 0;
+        background: radial-gradient(ellipse 70% 80% at 50% 42%, #283562 0%, #141c3a 55%, #0b1024 100%);
+      }
+      /* The mark: the mascot with its glow, one unit that lands centred and then slides left. */
+      #card-mark {
+        position: relative;
+        width: 380px;
+        height: 380px;
+        flex: none;
+      }
+      #card-glow {
+        position: absolute;
+        left: -110px;
+        top: -110px;
+        width: 600px;
+        height: 600px;
+        border-radius: 50%;
+        background: radial-gradient(circle, var(--accent) 0%, transparent 65%);
+        opacity: 0;
+      }
+      #card-stack {
+        position: absolute;
+        inset: 0;
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        justify-content: center;
+        gap: 56px;
+      }
+      #card-mascot {
+        position: relative;
+        width: 380px;
+        height: 380px;
+        display: block;
+      }
+      /* The words, to the right of the mark and left-aligned; the whole lockup is centred. */
+      #card-words {
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+      }
+      #card-title {
+        margin: 0;
+        color: var(--ink);
+        font-size: 136px;
+        font-weight: 900;
+        letter-spacing: -0.035em;
+        line-height: 1;
+      }
+      #card-title span {
+        display: inline-block;
+      }
+      #card-name {
+        position: relative;
+      }
+      /* The 1 px line the name opens out of, across the name's full width at its middle. */
+      #card-line {
+        position: absolute;
+        left: 0;
+        right: 0;
+        top: 50%;
+        height: 1px;
+        background: var(--ink);
+        transform-origin: left center;
+        opacity: 0;
+      }
+      #card-tagline {
+        margin: 14px 0 0 6px;
+        color: var(--muted);
+        font-size: 42px;
+        white-space: nowrap;
+        font-weight: 400;
+        letter-spacing: -0.01em;
+        line-height: 1.2;
+      }
+      /* Typed text, then the caret, then the rest of the line kept invisible so the width never changes. */
+      #card-rest {
+        visibility: hidden;
+      }
+      #card-caret {
+        display: inline-block;
+        position: relative;
+        width: 0;
+        height: 1em;
+        vertical-align: -0.12em;
+      }
+      #card-caret::after {
+        content: "";
+        position: absolute;
+        left: 2px;
+        top: 0;
+        width: 3px;
+        height: 100%;
+        background: var(--accent);
+      }
+      .hidden-rest {
+        visibility: hidden;
+      }
+      .block-caret {
+        display: inline-block;
+        position: relative;
+        width: 0;
+        height: 1em;
+        vertical-align: -0.12em;
+      }
+      .block-caret::after {
+        content: "";
+        position: absolute;
+        left: 3px;
+        top: 0;
+        width: 0.55em;
+        height: 100%;
+        background: var(--accent);
+        opacity: 0.85;
+      }
+      .card-icon {
+        width: 0.8em;
+        height: 0.8em;
+        flex: none;
+        color: var(--accent);
+      }
+      /* The command is the hero; the website and the handle share one line under it. */
+      #card-links {
+        position: absolute;
+        left: 0;
+        right: 0;
+        top: 600px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 34px;
+      }
+      #card-cmd {
+        display: flex;
+        align-items: center;
+        gap: 28px;
+        padding: 22px 44px 22px 38px;
+        border-radius: 20px;
+        background: rgba(255, 255, 255, 0.07);
+        border: 1px solid rgba(255, 255, 255, 0.16);
+        font-family: "JetBrains Mono", monospace;
+        font-size: 66px;
+        line-height: 1.2;
+        color: var(--ink);
+        white-space: nowrap;
+      }
+      #card-prompt {
+        color: var(--accent);
+      }
+      #card-meta {
+        display: flex;
+        align-items: center;
+        gap: 14px;
+        margin: 0;
+        color: var(--muted);
+        font-size: 40px;
+        line-height: 1.2;
+      }
+      #card-meta b {
+        color: var(--ink);
+        font-weight: 700;
+      }
+      #card-dot {
+        margin: 0 0.5em;
+        color: var(--accent);
+      }
+    </style>
+
+    <div id="root" data-composition-id="card" data-width="1920" data-height="1080">
+      <div id="card-ground"></div>
+      <div id="card-stack" data-layout-allow-overflow>
+        <div id="card-mark" data-layout-allow-overflow>
+          <div id="card-glow"></div>
+          <img id="card-mascot" src="assets/mascot.png" alt="BrAIan" />
+        </div>
+        <div id="card-words">
+        <div id="card-name" data-layout-allow-overlap>
+        <div id="card-line"></div>
+        <h1 id="card-title" data-layout-allow-overlap>
+          <span class="card-l">B</span><span class="card-l">r</span><span class="card-l card-ai">A</span><span
+            class="card-l card-ai"
+            >I</span
+          ><span class="card-l">a</span><span class="card-l">n</span>
+        </h1>
+        </div>
+        <p id="card-tagline"><span id="card-typed"></span><span id="card-caret"></span><span id="card-rest" data-var-text="tagline">Your second brain, wired.</span></p>
+        </div>
+      </div>
+      <div id="card-links">
+        <div id="card-cmd"><span id="card-prompt">$</span><span><span id="card-cmd-typed"></span><span class="block-caret" id="card-cmd-caret"></span><span class="hidden-rest" id="card-cmd-rest" data-var-text="command">npx braian</span></span></div>
+        <p id="card-meta"><svg class="card-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M2 12h20"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg><b data-var-text="url">getbraian.github.io</b><span id="card-dot">·</span><svg class="card-icon" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M18.901 1.153h3.68l-8.04 9.19L24 22.846h-7.406l-5.8-7.584-6.638 7.584H.474l8.6-9.83L0 1.154h7.594l5.243 6.932ZM17.61 20.644h2.039L6.486 3.24H4.298Z"/></svg><b data-var-text="handle">@thepeg</b></p>
+      </div>
+    </div>
+
+    <script>
+      const tl = gsap.timeline({ paused: true });
+      const accent = (window.__hyperframes?.getVariables?.() || {}).accent || "#4daafc";
+
+      // 0.0–0.4  the ground rises out of black
+      tl.fromTo("#card-ground", { opacity: 0 }, { opacity: 1, duration: 0.4, ease: "power2.out" }, 0);
+
+      // The mark lands in the centre of the frame, then slides left into the lockup. MARK_SHIFT is half
+      // of the words' width plus the gap, measured at 1920 x 1080 with the default punch line.
+      const MARK_SHIFT = 280;
+
+      // 0.2–0.8  the mascot sweeps in from a blur and lands with a soft overshoot (whoosh, then the bass hit)
+      tl.set("#card-mark", { x: MARK_SHIFT }, 0);
+      tl.fromTo(
+        "#card-mascot",
+        { opacity: 0, filter: "blur(14px)" },
+        { opacity: 1, filter: "blur(0px)", duration: 0.35, ease: "power2.out" },
+        0.2,
+      );
+      tl.fromTo(
+        "#card-mascot",
+        { scale: 0.55, y: 60 },
+        { scale: 1, y: 0, duration: 0.6, ease: "back.out(1.6)" },
+        0.2,
+      );
+      tl.fromTo("#card-glow", { opacity: 0, scale: 0.6 }, { opacity: 0.35, scale: 1, duration: 0.9, ease: "expo.out" }, 0.55);
+
+      // 1.15–1.7  the mark slides left to make room; to its right a 1 px line draws across the name's width
+      // (1.3–1.48), then opens in height from its middle to reveal the name (1.45–1.83) as the line fades
+      tl.fromTo("#card-mark", { x: MARK_SHIFT }, { x: 0, duration: 0.55, ease: "power3.inOut", immediateRender: false }, 1.15);
+      tl.fromTo("#card-line", { opacity: 1, scaleX: 0 }, { opacity: 1, scaleX: 1, duration: 0.18, ease: "power3.out", immediateRender: false }, 1.3);
+      tl.fromTo(
+        "#card-title",
+        { clipPath: "inset(50% 0% 50% 0%)" },
+        { clipPath: "inset(0% 0% 0% 0%)", duration: 0.38, ease: "expo.inOut" },
+        1.45,
+      );
+      tl.set("#card-title", { clipPath: "none" }, 1.84); // so the glow on "AI" is not clipped
+      tl.to("#card-line", { opacity: 0, duration: 0.25, ease: "power2.in" }, 1.55);
+
+      // 1.85  "AI" lights up in the accent colour (the sparkle)
+      tl.fromTo(
+        "#card-title .card-ai",
+        { color: "#ffffff", textShadow: "0 0 0px rgba(77,170,252,0)" },
+        { color: accent, textShadow: "0 0 28px rgba(77,170,252,0.55)", duration: 0.25, ease: "power2.out" },
+        1.85,
+      );
+
+      // 2.1–2.95  the punch line types itself one character at a time behind an accent caret,
+      // and the caret fades once the line is complete; then everything holds dead still
+      const line = (window.__hyperframes?.getVariables?.() || {}).tagline || document.querySelector("#card-rest").textContent;
+      const typed = document.querySelector("#card-typed");
+      const rest = document.querySelector("#card-rest");
+      const typing = { n: 0 };
+      const showTyped = () => {
+        const n = Math.round(typing.n);
+        typed.textContent = line.slice(0, n);
+        rest.textContent = line.slice(n);
+      };
+      showTyped();
+      tl.fromTo("#card-caret", { opacity: 0 }, { opacity: 1, duration: 0.01 }, 2.05);
+      tl.fromTo(typing, { n: 0 }, { n: line.length, duration: line.length * 0.034, ease: "none", onUpdate: showTyped }, 2.1);
+      tl.to("#card-caret", { opacity: 0, duration: 0.2, ease: "power2.out" }, 2.1 + line.length * 0.034 + 0.35);
+
+      const v = window.__hyperframes?.getVariables?.() || {};
+      const url = v.url || "getbraian.github.io";
+      const cmd = v.command || "npx braian";
+      const handle = v.handle || "@thepeg";
+      // types `text` into #<id>-typed, keeping the untyped rest in #<id>-rest (hidden, so the width never changes)
+      const typeInto = (id, text, at, perChar) => {
+        const typed = document.querySelector("#" + id + "-typed"), rest = document.querySelector("#" + id + "-rest");
+        const p = { n: 0 };
+        const show = () => { const n = Math.round(p.n); typed.textContent = text.slice(0, n); rest.textContent = text.slice(n); };
+        show();
+        tl.fromTo(p, { n: 0 }, { n: text.length, duration: text.length * perChar, ease: "none", onUpdate: show, immediateRender: false }, at);
+      };
+
+      // 3.3 on  the outro: p2-command-hero
+      tl.to("#card-stack", { y: -190, scale: 0.78, duration: 0.65, ease: "power3.inOut" }, 3.3);
+      tl.fromTo("#card-cmd", { opacity: 0, y: 24, scale: 0.96 }, { opacity: 1, y: 0, scale: 1, duration: 0.4, ease: "power3.out" }, 3.75);
+      typeInto("card-cmd", cmd, 3.95, 0.05);
+      tl.fromTo("#card-meta", { opacity: 0, y: 24, filter: "blur(6px)" }, { opacity: 1, y: 0, filter: "blur(0px)", duration: 0.35, ease: "power3.out" }, 4.6);
+
+      // the final composition holds to the end: no fade
+
+      window.__timelines["card"] = tl;
+    </script>
+  </template>
+</html>

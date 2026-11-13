@@ -1,0 +1,87 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Outro proposals</title>
+<style>
+  :root { --bg:#0b0d10; --card:#14171c; --line:#252a31; --text:#e8eaed; --muted:#9aa3ad; --accent:#4daafc; }
+  * { box-sizing: border-box; }
+  body { margin:0; background:var(--bg); color:var(--text); font:15px/1.5 -apple-system, BlinkMacSystemFont, "Inter", sans-serif; }
+  main { max-width:1180px; margin:0 auto; padding:32px 16px 64px; }
+  h1 { font-size:22px; margin:0 0 4px; }
+  p.lead { color:var(--muted); margin:0 0 24px; max-width:780px; }
+  kbd { background:var(--card); border:1px solid var(--line); border-radius:4px; padding:0 5px; font-size:12px; }
+  .grid { display:grid; grid-template-columns:1fr; gap:16px; }
+  @media (min-width: 720px) { .grid { grid-template-columns:1fr 1fr; } }
+  .card { background:var(--card); border:1px solid var(--line); border-radius:10px; overflow:hidden; display:flex; flex-direction:column; }
+  .card.playing { border-color:var(--accent); }
+  video { width:100%; display:block; background:#000; aspect-ratio:16/9; }
+  .body { padding:12px 14px 14px; display:flex; flex-direction:column; gap:6px; flex:1; }
+  .title { display:flex; align-items:baseline; gap:8px; font-weight:600; }
+  .num { color:var(--accent); font-variant-numeric:tabular-nums; }
+  .desc { color:var(--muted); font-size:14px; flex:1; }
+  .row { display:flex; gap:8px; flex-wrap:wrap; }
+  button { background:transparent; color:var(--text); border:1px solid var(--line); border-radius:6px; padding:5px 10px; font:inherit; font-size:13px; cursor:pointer; }
+  button:hover { border-color:var(--accent); }
+  code { font-size:12px; color:var(--muted); }
+</style>
+</head>
+<body>
+<main>
+  <h1>Outro proposals</h1>
+  <p class="lead">Ways to present the three links after the logo, all in the same order: <code>npx braian</code>, then the website, then @thepeg on X, with icons for the website and the handle. 6, at the top, is the chosen one and is now the outro (it replaced the old 5). The first 3.3 s are the same in all of them (the intro's lockup and sound), and each ends on its final composition, which stays on screen with no fade. 1 is the column layout the outro first had. Press <kbd>1</kbd>–<kbd>4</kbd> or <kbd>6</kbd> to play a proposal, <kbd>Shift</kbd>+number to jump to its ending, <kbd>Space</kbd> to stop.</p>
+  <div class="grid" id="grid"></div>
+</main>
+<script>
+const proposals = [
+  ["p6-side", "★ Side by side — THE OUTRO", "Chosen and now the outro (centred on the frame): the lockup slides left; past a thin accent divider, the command in its $ pill (typed), then the website with a globe and @thepeg with the X logo, the icons lined up under the $."],
+  ["p1-column", "Column", "The lockup rises; under it, in a centred column: the command typed into its pill, then the website and the handle with their icons."],
+  ["p2-command-hero", "Command hero", "The command is the star: a big pill where npx braian types itself, with the website and the handle (with icons) on one quieter line under it."],
+  ["p3-cards", "Three cards", "Three labelled cards side by side: Try it, Website, Follow on X. The command types into its card; the website and handle have their icons."],
+  ["p4-terminal", "Terminal", "A terminal window types all three lines: the command to run first, then the website and the handle as comments (no icons, to stay a terminal)."],
+];
+const VERSION = 4;   // bump when the videos are rendered again, so browsers don't play a cached copy
+const grid = document.getElementById("grid");
+const media = [];
+proposals.forEach(([id, name, desc], i) => {
+  const card = document.createElement("div");
+  card.className = "card";
+  card.innerHTML = `
+    <video src="${id}.mp4?v=${VERSION}" controls preload="auto" playsinline></video>
+    <div class="body">
+      <div class="title"><span class="num">${i === 0 ? "6" : i}</span>${name}</div>
+      <div class="desc">${desc}</div>
+      <div class="row"><button data-act="play">▶ Play</button><button data-act="end">⏭ Ending</button></div>
+      <code>proposals/${id}.mp4</code>
+    </div>`;
+  const video = card.querySelector("video");
+  media.push({ card, video });
+  card.querySelector('[data-act="play"]').onclick = () => play(i, 0);
+  card.querySelector('[data-act="end"]').onclick = () => play(i, 4.6);
+  video.addEventListener("play", () => stopAll(video));
+  // the local test server is single-threaded and can drop one of several parallel loads: retry once
+  video.addEventListener("error", () => setTimeout(() => video.load(), 400 + 300 * i), { once: true });
+  grid.appendChild(card);
+});
+function stopAll(except) {
+  media.forEach(m => {
+    if (m.video !== except) { m.video.pause(); }
+    m.card.classList.toggle("playing", m.video === except);
+  });
+}
+function play(i, at) {
+  const v = media[i].video;
+  stopAll(v);
+  v.currentTime = at;
+  v.play();
+}
+addEventListener("keydown", e => {
+  if (e.code === "Space") { e.preventDefault(); stopAll(null); return; }
+  const d = e.code.startsWith("Digit") ? +e.code.slice(5) : NaN;
+  const n = d === 6 ? 0 : d === 5 ? NaN : d;   // proposal 6 is shown first; 1–4 keep their numbers; 5 is gone
+  if (n >= 0 && n < media.length) play(n, e.shiftKey ? 4.6 : 0);
+});
+</script>
+</body>
+</html>

@@ -7,7 +7,7 @@ Video material for BrAIan: the brand pieces every video uses, and the reusable v
 | [`logo/`](logo) | The brain mascot at 512 px, the master every video and app icon is scaled from |
 | [`assets/`](assets) | The reusable video assets, one folder each |
 | [`assets/intro/`](assets/intro) | The 5-second intro for the start of our videos: look at [`intro.preview.mp4`](assets/intro/intro.preview.mp4) |
-| [`assets/outro/`](assets/outro) | The 9-second outro for the end: the logo, then the website, `npx braian` and the X handle. Look at [`outro.preview.mp4`](assets/outro/outro.preview.mp4) |
+| [`assets/outro/`](assets/outro) | The 9-second outro for the end: the logo, then `npx braian`, the website and the X handle beside it. Look at [`outro.preview.mp4`](assets/outro/outro.preview.mp4) |
 | [`.agents/skills/`](.agents/skills) | The HyperFrames agent skills, vendored from HeyGen; Claude Code reads them through `.claude/skills` |
 
 ## Assets
