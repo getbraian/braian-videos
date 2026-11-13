@@ -45,32 +45,16 @@
         data-height="1080"
       ></div>
 
-      <!-- The sound logo: a whoosh as the mascot sweeps in, a bass hit as it lands, a sparkle as "AI" lights up.
-           Each file's peak lands one frame after its picture (peaks measured with `hyperframes audio`). -->
+      <!-- The sound logo: a vibraphone chord (E, B, E) over a full, pitched low E whose fade follows the chord's,
+           struck as the mascot lands (its attack at 0.633 s). Made in code; see sound-sets/README.md. -->
       <audio
-        id="sfx-whoosh"
+        id="sfx-logo"
         class="clip"
-        src="assets/sfx/whoosh-short.mp3"
-        data-start="0.17"
+        src="assets/sfx/braian-logo.wav"
+        data-start="0.632"
+        data-duration="4.306"
         data-track-index="2"
-        data-volume="0.4"
-      ></audio>
-      <audio
-        id="sfx-impact"
-        class="clip"
-        src="assets/sfx/impact-bass-1.mp3"
-        data-start="0.58"
-        data-track-index="3"
-        data-volume="0.5"
-      ></audio>
-      <audio
-        id="sfx-sparkle"
-        class="clip"
-        src="assets/sfx/sparkle.mp3"
-        data-start="1.86"
-        data-track-index="4"
-        data-volume="0.28"
-        data-fade-out="0.4"
+        data-volume="1"
       ></audio>
     </div>
     <script>

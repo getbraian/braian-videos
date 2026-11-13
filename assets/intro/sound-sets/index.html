@@ -1,0 +1,88 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Intro sound sets</title>
+<style>
+  :root { --bg:#0b0d10; --card:#14171c; --line:#252a31; --text:#e8eaed; --muted:#9aa3ad; --accent:#4daafc; }
+  * { box-sizing: border-box; }
+  body { margin:0; background:var(--bg); color:var(--text); font:15px/1.5 -apple-system, BlinkMacSystemFont, "Inter", sans-serif; }
+  main { max-width:1180px; margin:0 auto; padding:32px 16px 64px; }
+  h1 { font-size:22px; margin:0 0 4px; }
+  p.lead { color:var(--muted); margin:0 0 24px; max-width:760px; }
+  kbd { background:var(--card); border:1px solid var(--line); border-radius:4px; padding:0 5px; font-size:12px; }
+  .grid { display:grid; grid-template-columns:1fr; gap:16px; }
+  @media (min-width: 720px) { .grid { grid-template-columns:1fr 1fr; } }
+  .card { background:var(--card); border:1px solid var(--line); border-radius:10px; overflow:hidden; display:flex; flex-direction:column; }
+  .card.playing { border-color:var(--accent); }
+  .card.chosen { border:2px solid var(--accent); box-shadow:0 0 0 4px rgba(77,170,252,.15); }
+  .card.chosen .title { color:var(--accent); }
+  video { width:100%; display:block; background:#000; aspect-ratio:16/9; }
+  .body { padding:12px 14px 14px; display:flex; flex-direction:column; gap:6px; flex:1; }
+  .title { display:flex; align-items:baseline; gap:8px; font-weight:600; }
+  .num { color:var(--accent); font-variant-numeric:tabular-nums; }
+  .desc { color:var(--muted); font-size:14px; flex:1; }
+  button { align-self:flex-start; background:transparent; color:var(--text); border:1px solid var(--line); border-radius:6px; padding:5px 10px; font:inherit; font-size:13px; cursor:pointer; }
+  button:hover { border-color:var(--accent); }
+  code { font-size:12px; color:var(--muted); }
+</style>
+</head>
+<body>
+<main>
+  <h1>Intro sound: on the name or on the landing</h1>
+  <p class="lead"><strong>Opening asset: n.7, Vibraphone + full weight, on the landing</strong> (highlighted). The other variations stay here for reference. Your four favourites, each twice: timed to "BrAIan" bursting open at 1.6 s (left), and timed as before to the mascot landing at 0.63 s (right). Timed to the name, the mascot lands in silence, and the sound's tail fades with the picture's fade to black. Press <kbd>0</kbd>–<kbd>7</kbd> to play one, <kbd>Space</kbd> to stop.</p>
+  <div class="grid" id="grid"></div>
+</main>
+<script>
+const sets = [
+  ["aligned/braian-intro-4-epiano-octave-up.mp4", "Electric piano, up an octave · on the name", "Timed to 'BrAIan' opening (1.6 s): E, then the E above as the name bursts open."],
+  ["kept/braian-intro-4-epiano-octave-up.mp4", "Electric piano, up an octave · on the landing", "As before, timed to the mascot landing (0.63 s)."],
+  ["aligned/braian-intro-9-vibraphone.mp4", "Vibraphone chord · on the name", "Timed to 'BrAIan' opening: the chord strikes as the name bursts open."],
+  ["kept/braian-intro-9-vibraphone.mp4", "Vibraphone chord · on the landing", "As before, timed to the mascot landing."],
+  ["aligned/braian-intro-13-vib-octave.mp4", "Vibraphone octave · on the name", "Timed to 'BrAIan' opening: E as the line opens, the E above as the name bursts open."],
+  ["kept/braian-intro-13-vib-octave.mp4", "Vibraphone octave · on the landing", "As before, timed to the mascot landing."],
+  ["aligned/braian-intro-24-full-synced.mp4", "Vibraphone + full weight · on the name", "Timed to 'BrAIan' opening: the chord and its low E strike as the name bursts open."],
+  ["kept/braian-intro-24-full-synced.mp4", "★ Vibraphone + full weight · on the landing — OPENING ASSET", "Chosen as the intro's opening sound: the vibraphone chord over a full, pitched low E fading in step with it, timed to the mascot landing (0.63 s)."],
+];
+const grid = document.getElementById("grid");
+const media = [];
+sets.forEach(([src, name, desc], i) => {
+  const card = document.createElement("div");
+  card.className = name.includes("OPENING ASSET") ? "card chosen" : "card";
+  card.innerHTML = `
+    <video src="${src}" controls preload="auto" playsinline></video>
+    <div class="body">
+      <div class="title"><span class="num">${i}</span>${name}</div>
+      <div class="desc">${desc}</div>
+      <button>▶ Play</button>
+      <code>${src}</code>
+    </div>`;
+  const video = card.querySelector("video");
+  media.push({ card, video });
+  card.querySelector("button").onclick = () => play(i);
+  video.addEventListener("play", () => stopAll(video));
+  // the local test server is single-threaded and can drop one of several parallel loads: retry once
+  video.addEventListener("error", () => setTimeout(() => video.load(), 400 + 300 * i), { once: true });
+  grid.appendChild(card);
+});
+function stopAll(except) {
+  media.forEach(m => {
+    if (m.video !== except) { m.video.pause(); m.video.currentTime = 0; }
+    m.card.classList.toggle("playing", m.video === except);
+  });
+}
+function play(i) {
+  const v = media[i].video;
+  stopAll(v);
+  v.currentTime = 0;
+  v.play();
+}
+addEventListener("keydown", e => {
+  if (e.code === "Space") { e.preventDefault(); stopAll(null); return; }
+  const n = e.code.startsWith("Digit") ? +e.code.slice(5) : NaN;
+  if (n >= 0 && n < media.length) play(n);
+});
+</script>
+</body>
+</html>
