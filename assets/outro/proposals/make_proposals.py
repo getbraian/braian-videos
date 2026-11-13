@@ -341,11 +341,11 @@ PROPOSALS = {
         line-height: 1.2;
         white-space: nowrap;
       }
-      /* The cursor: a block while the command types, then a thin accent bar a little apart from the last letter,
-         blinking until the end. Both are drawn on #card-cmd-caret and switched with --block and --bar. */
+      /* The cursor: a thin accent bar a little apart from the last letter, all the way: it follows the letters
+         as the command types, then blinks until the end (--bar). The shared block cursor is turned off. */
       #card-cmd-caret {
-        --block: 0.85;
-        --bar: 0;
+        --block: 0;
+        --bar: 0.9;
       }
       #card-cmd-caret::after {
         opacity: var(--block);
@@ -379,9 +379,8 @@ PROPOSALS = {
       tl.fromTo("#card-divider", { opacity: 0, scaleY: 0 }, { opacity: 0.8, scaleY: 1, duration: 0.45, ease: "power3.out" }, 3.75);
       tl.fromTo("#card-cmd", { opacity: 0, x: -24 }, { opacity: 1, x: 0, duration: 0.35, ease: "power3.out" }, 3.95);
       typeInto("card-cmd", cmd, 4.15, 0.045);
-      // once typed, the block becomes a thin bar that blinks (about 0.53 s on, 0.53 s off, soft 80 ms edges) to the end
+      // once typed, the thin bar blinks (about 0.53 s on, 0.53 s off, soft 80 ms edges) to the end
       const typedAt = 4.15 + cmd.length * 0.045 + 0.12;
-      tl.fromTo("#card-cmd-caret", { "--block": 0.85, "--bar": 0 }, { "--block": 0, "--bar": 0.9, duration: 0.08, ease: "none", immediateRender: false }, typedAt);
       for (let t = typedAt + 0.53, on = false; t < 9; t += 0.53, on = !on) {
         tl.to("#card-cmd-caret", { "--bar": on ? 0.9 : 0, duration: 0.08, ease: "none" }, t);
       }
