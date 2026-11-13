@@ -44,4 +44,4 @@ ffmpeg -y -i braian-intro-1080p.mp4 -c:v libvpx-vp9 -crf 28 -b:v 0 -row-mt 1 -c:
 ffmpeg -y -i braian-intro-1080p.mp4 -c:v prores_ks -profile:v 3 -pix_fmt yuv422p10le -c:a pcm_s16le braian-intro-1080p-prores.mov
 ```
 
-The mascot is 512 px (`../../logo`) and shown at 380 px, so it has a little room to grow, but a 4K render needs a larger master first.
+The mascot is 512 px (`../logo`) and shown at 380 px, so it has a little room to grow, but a 4K render needs a larger master first.

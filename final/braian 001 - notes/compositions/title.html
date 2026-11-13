@@ -1,0 +1,203 @@
+<html
+  data-composition-variables='[
+    {"id":"title","type":"string","label":"Title","default":"Notes","maxLength":28},
+    {"id":"episode","type":"string","label":"Episode","default":"Episode 001","maxLength":24}
+  ]'
+>
+  <template>
+    <style>
+      #root {
+        position: absolute;
+        inset: 0;
+        overflow: hidden;
+        font-family: "Inter", sans-serif;
+        --accent: #4daafc;
+        --ink: #ffffff;
+        --muted: #aab3c8;
+      }
+      /* The intro's ground, then a vignette that darkens the edges like a film frame. */
+      #tc-ground {
+        position: absolute;
+        inset: 0;
+        background: radial-gradient(ellipse 70% 80% at 50% 42%, #283562 0%, #141c3a 55%, #0b1024 100%);
+        opacity: 0;
+      }
+      #tc-vignette {
+        position: absolute;
+        inset: 0;
+        background: radial-gradient(ellipse 75% 70% at 50% 50%, transparent 55%, rgba(0, 0, 0, 0.55) 100%);
+      }
+      #tc-glow {
+        position: absolute;
+        left: 610px;
+        top: 150px;
+        width: 700px;
+        height: 480px;
+        border-radius: 50%;
+        background: radial-gradient(ellipse, var(--accent) 0%, transparent 65%);
+        opacity: 0;
+      }
+      /* Everything that is pushed in slowly, like a camera move. */
+      #tc-stage {
+        position: absolute;
+        inset: 0;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+      }
+      #tc-lockup {
+        display: flex;
+        align-items: center;
+        gap: 24px;
+      }
+      #tc-mascot {
+        width: 120px;
+        height: 120px;
+        display: block;
+      }
+      #tc-words {
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+      }
+      #tc-tagline {
+        margin: 8px 0 0 3px;
+        color: var(--muted);
+        font-size: 28px;
+        font-weight: 400;
+        letter-spacing: -0.01em;
+        line-height: 1.2;
+        white-space: nowrap;
+      }
+      #tc-name {
+        margin: 0;
+        color: var(--ink);
+        font-size: 68px;
+        font-weight: 900;
+        letter-spacing: -0.035em;
+        line-height: 1;
+      }
+      .tc-ai {
+        color: var(--accent);
+        text-shadow: 0 0 28px rgba(77, 170, 252, 0.55);
+      }
+      #tc-line {
+        margin-top: 34px;
+        width: 360px;
+        height: 2px;
+        background: linear-gradient(90deg, transparent, var(--accent), transparent);
+        opacity: 0;
+      }
+      #tc-episode {
+        margin: 34px 0 0;
+        color: var(--accent);
+        font-size: 28px;
+        font-weight: 700;
+        letter-spacing: 0.32em;
+        text-transform: uppercase;
+        line-height: 1;
+        padding-left: 0.32em;
+      }
+      #tc-title-box {
+        position: relative;
+        margin-top: 26px;
+      }
+      #tc-title {
+        margin: 0;
+        color: var(--ink);
+        font-size: 120px;
+        font-weight: 900;
+        letter-spacing: -0.03em;
+        line-height: 1.05;
+        white-space: nowrap;
+      }
+      #tc-title span {
+        display: inline-block;
+      }
+      /* A band of light that sweeps across the title once it has landed. */
+      #tc-sweep {
+        position: absolute;
+        inset: 0;
+        margin: 0;
+        font-size: 120px;
+        font-weight: 900;
+        letter-spacing: -0.03em;
+        line-height: 1.05;
+        white-space: nowrap;
+        color: transparent;
+        background: linear-gradient(100deg, transparent 0%, transparent 40%, rgba(170, 215, 255, 0.95) 50%, transparent 60%, transparent 100%);
+        background-size: 300% 100%;
+        background-position: 100% 0;
+        -webkit-background-clip: text;
+        background-clip: text;
+      }
+    </style>
+
+    <div id="root" data-composition-id="title" data-width="1920" data-height="1080">
+      <div id="tc-ground"></div>
+      <div id="tc-glow"></div>
+      <div id="tc-stage">
+        <div id="tc-lockup">
+          <img id="tc-mascot" src="assets/mascot.png" alt="BrAIan" />
+          <div id="tc-words">
+            <h2 id="tc-name">Br<span class="tc-ai">AI</span>an</h2>
+            <p id="tc-tagline">Your second brain, wired.</p>
+          </div>
+        </div>
+        <div id="tc-line"></div>
+        <p id="tc-episode" data-var-text="episode">Episode 001</p>
+        <div id="tc-title-box" data-layout-allow-overlap>
+          <h1 id="tc-title" aria-label="Notes"></h1>
+          <p id="tc-sweep" aria-hidden="true" data-layout-allow-overlap data-layout-ignore></p>
+        </div>
+      </div>
+      <div id="tc-vignette"></div>
+    </div>
+
+    <script>
+      const tl = gsap.timeline({ paused: true });
+      const v = window.__hyperframes?.getVariables?.() || {};
+      const title = v.title || "Notes";
+
+      // the title as one span per letter, so each can rise on its own; the sweep layer carries the same text
+      const titleEl = document.querySelector("#tc-title");
+      titleEl.textContent = "";
+      for (const ch of title) {
+        const s = document.createElement("span");
+        s.className = "tc-ch";
+        s.textContent = ch === " " ? " " : ch;
+        titleEl.appendChild(s);
+      }
+      document.querySelector("#tc-sweep").textContent = title;
+
+      // 0–0.9  the ground comes up out of black; a slow push-in (1.06 to 1) runs under everything and settles by 5.6
+      tl.fromTo("#tc-ground", { opacity: 0 }, { opacity: 1, duration: 0.9, ease: "power2.out" }, 0);
+      tl.fromTo("#tc-stage", { scale: 1.06 }, { scale: 1, duration: 5.6, ease: "power2.out" }, 0);
+
+      // 0.52  first beat: the logo resolves out of a blur, the glow blooms behind it
+      tl.fromTo("#tc-lockup", { opacity: 0, filter: "blur(18px)" }, { opacity: 1, filter: "blur(0px)", duration: 0.9, ease: "power2.out" }, 0.52);
+      tl.fromTo("#tc-glow", { opacity: 0, scale: 0.7 }, { opacity: 0.22, scale: 1, duration: 1.4, ease: "expo.out" }, 0.52);
+
+      // 1.07  second beat: a thin accent line draws out from the centre
+      tl.fromTo("#tc-line", { opacity: 0, scaleX: 0 }, { opacity: 1, scaleX: 1, duration: 0.7, ease: "expo.out" }, 1.07);
+
+      // 1.61  third beat: the episode label settles in, from wide and soft to its size
+      tl.fromTo("#tc-episode", { opacity: 0, scale: 1.12, filter: "blur(6px)" }, { opacity: 1, scale: 1, filter: "blur(0px)", duration: 1.0, ease: "power3.out" }, 1.61);
+
+      // 2.16  the drums: the title rises letter by letter out of a blur
+      tl.fromTo(".tc-ch", { opacity: 0, y: 48, filter: "blur(14px)" }, { opacity: 1, y: 0, filter: "blur(0px)", duration: 0.55, ease: "power4.out", stagger: 0.035 }, 2.16);
+
+      // 2.75–3.65  a band of light sweeps across the landed title
+      tl.fromTo("#tc-sweep", { backgroundPosition: "100% 0" }, { backgroundPosition: "0% 0", duration: 0.9, ease: "power2.inOut" }, 2.75);
+
+      // 3.65–5.7333  it holds; from 5.6 nothing moves, and that still frame is the episode's cover
+
+      // 5.7333–6.53  the exit: the card pushes in, blurs and fades while the clip dissolves in over it
+      tl.to("#tc-stage", { scale: 1.08, opacity: 0, filter: "blur(12px)", duration: 0.8, ease: "power2.in" }, 5.7333);
+      tl.to("#tc-glow", { opacity: 0, duration: 0.8, ease: "power2.in" }, 5.7333);
+
+      window.__timelines["title"] = tl;
+    </script>
+  </template>
+</html>

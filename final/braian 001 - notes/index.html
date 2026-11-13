@@ -1,0 +1,98 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=1920, height=1080" />
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.15.0/dist/gsap.min.js"></script>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+      html,
+      body {
+        margin: 0;
+        width: 1920px;
+        height: 1080px;
+        overflow: hidden;
+        background: #000;
+      }
+      #root {
+        width: 100%;
+        height: 100%;
+      }
+      /* The ground behind the clip: the intro's own gradient, so any room above and below the clip matches the brand. */
+      #ground {
+        position: absolute;
+        inset: 0;
+        background: radial-gradient(ellipse 70% 80% at 50% 42%, #283562 0%, #141c3a 55%, #0b1024 100%);
+      }
+      .full {
+        position: absolute;
+        inset: 0;
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+      }
+      /* The clip and the outro sit in wrappers that the root timeline dissolves; the videos themselves are timed. */
+      #clip-wrap,
+      #outro-wrap {
+        position: absolute;
+        inset: 0;
+      }
+      #clip {
+        position: absolute;
+        left: 0;
+        top: 96px;
+        width: 1920px;
+        height: 888px;
+        object-fit: contain;
+      }
+    </style>
+  </head>
+  <body>
+    <!-- braian 001 - notes: intro 0–5.0 s, title card from 5.0 s, dissolving into the clip from 10.7333 s, which dips to black
+         into the outro at 64.7667 s; 73.7667 s in all.
+         To trim the clip, change its data-media-start (where it starts in the file) and data-duration, then move the
+         outro's data-start, the music bed's data-duration and the root's data-duration to match. -->
+    <div id="root" data-composition-id="main" data-start="0" data-duration="73.7667" data-width="1920" data-height="1080">
+      <video id="intro" class="clip full" src="assets/intro.mp4" data-start="0" data-duration="5.0" data-track-index="1" data-has-audio="true"></video>
+      <div
+        id="title"
+        data-composition-id="title"
+        data-composition-src="compositions/title.html"
+        data-start="5.0"
+        data-duration="6.5333"
+        data-track-index="2"
+        data-track-kind="graphics"
+        data-width="1920"
+        data-height="1080"
+      ></div>
+      <div id="clip-wrap">
+        <div id="ground" class="clip" data-start="10.7333" data-duration="54.0333" data-track-index="3"></div>
+        <video id="clip" class="clip" src="assets/clip.mp4" data-start="10.7333" data-media-start="0" data-duration="54.0333" data-track-index="4" data-has-audio="true"></video>
+      </div>
+      <!-- The outro plays without its own logo sound (muted): the music carries it. For the logo sound, swap muted for data-has-audio="true". -->
+      <div id="outro-wrap">
+        <video id="outro" class="clip full" src="assets/outro.mp4" data-start="64.7667" data-duration="9.0" data-track-index="5" muted></video>
+      </div>
+
+      <!-- The music, one track played as three overlapping pieces that stay in step (each starts in the file at its
+           time minus 5.0 s): at title level under the title card; dropping to a bed under the clip's voice over 0.6 s;
+           rising back over the clip's last 1.5 s, and fading out over the outro's first 6.0 s. -->
+      <audio id="music-title" class="clip" src="assets/music.mp3" data-start="5.0" data-media-start="0" data-duration="6.3333" data-volume="0.62" data-fade-out="0.6" data-track-index="6"></audio>
+      <audio id="music-bed" class="clip" src="assets/music.mp3" data-start="10.7333" data-media-start="5.7333" data-duration="54.0333" data-volume="0.085" data-fade-in="0.6" data-fade-out="1.5" data-track-index="7"></audio>
+      <audio id="music-end" class="clip" src="assets/music.mp3" data-start="63.2667" data-media-start="58.2667" data-duration="7.5" data-volume="0.5" data-fade-in="1.5" data-fade-out="6.0" data-track-index="8"></audio>
+    </div>
+    <script>
+      window.__timelines = window.__timelines || {};
+      const tl = gsap.timeline({ paused: true });
+      // into the clip: it settles in (from 104 % and transparent) while the title card pushes in and blurs away under it
+      tl.fromTo("#clip-wrap", { opacity: 0, scale: 1.04 }, { opacity: 1, scale: 1, duration: 0.8, ease: "power2.out" }, 10.7333);
+      // out of the clip: it eases back and dips to black over its last 1.0 s; the outro rises out of its own black
+      tl.to("#clip-wrap", { opacity: 0, scale: 1.03, duration: 1.0, ease: "power2.in" }, 63.7667);
+      window.__timelines["main"] = tl;
+    </script>
+  </body>
+</html>
