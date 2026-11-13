@@ -4,7 +4,7 @@ A 9-second outro to put at the end of our videos. Look at it in [`outro.preview.
 
 1. The first three seconds are the intro's: the mascot lands with the sound logo, slides left as "BrAIan" opens beside it, "AI" lights up and the punch line types itself in (0–2.95 s).
 2. The lockup slides left and settles at 70 % of its size (3.3–4.0 s), and a thin accent divider grows beside it (3.75 s).
-3. To the right of the divider, left-aligned: `npx braian` types itself into a terminal-style `$` prompt (3.95–4.6 s), then the website slides in with a globe icon (4.7 s), then @thepeg with the X logo (4.95 s). The icons are in the accent colour, lined up under the `$`.
+3. To the right of the divider, left-aligned: `npx braian` types itself into a terminal-style `$` prompt behind a block cursor (4.15–4.6 s), which then turns into a thin accent bar, a little apart from the last letter, blinking to the end; then the website slides in with a globe icon (4.7 s), then @thepeg with the X logo (4.95 s). The icons are in the accent colour, lined up under the `$`.
 4. That final composition stays on screen to the end, with no fade (5.3–9 s). It is centred on the frame.
 
 1920 × 1080, 30 fps. The sound is the intro's sound logo, struck as the mascot lands (see `../intro/sound-sets/`). The mix measures −15.4 LUFS with a −1.0 dBTP peak.
